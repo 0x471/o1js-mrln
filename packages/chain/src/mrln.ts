@@ -137,7 +137,6 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         const member = new User({address: tx_sender, messageLimit: messageLimit, index: index});
         this.members.set(identityCommitment, member);
-        // TODO: emit registeration event
 
         this.identityCommitmentIndex.set(this.identityCommitmentIndex.get().value.add(1));
     }
@@ -152,7 +151,6 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const withdrawAmount = UInt64.from(member.messageLimit.value).mul(UInt64.from(this.MINIMAL_DEPOSIT.get().value));
         const withdrawal = new Withdrawal({blockNumber: UInt64.from(this.network.block.height), amount: withdrawAmount, receiver: member.address});
         this.withdrawals.set(identityCommitment, withdrawal);
-        // TODO: emit withdrawal event
     }
 
     @runtimeMethod()
