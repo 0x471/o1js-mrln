@@ -45,10 +45,14 @@ export function RLN(
     const identityCommitment = Poseidon.hash([identitySecret]);
     const rateCommitment = Poseidon.hash([identityCommitment, userMessageLimit]);
 
+    // membership check
     const root = witness.calculateRoot(rateCommitment);
+
+    // SSS share calculations
     const a1 = Poseidon.hash([identitySecret, publicInput.externalNullifier, messageId]);
     const y = a1.mul(publicInput.x).add(identitySecret);
 
+    // nullifier calculation
     const nullifier = Poseidon.hash([a1]);
 
     return new MRLNCircuitPublicOutput({
@@ -98,7 +102,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @state() public members = StateMap.from(UInt64, User)
     @state() public withdrawals = StateMap.from(UInt64, Withdrawal)
 
-
+    // TODO: events?
     public constructor(@inject("Balances") public balances: Balances,
         minimalDeposit: Field,
         maximalRate: Field,
@@ -135,7 +139,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         this.balances.removeBalance(TokenId.from(1), tx_sender, amount);
 
-        const member = new User({address: tx_sender, messageLimit: messageLimit, index: index});
+        const member = new User({ address: tx_sender, messageLimit: messageLimit, index: index });
         this.members.set(identityCommitment, member);
 
         this.identityCommitmentIndex.set(this.identityCommitmentIndex.get().value.add(1));
@@ -149,7 +153,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         proof.verify();
 
         const withdrawAmount = UInt64.from(member.messageLimit.value).mul(UInt64.from(this.MINIMAL_DEPOSIT.get().value));
-        const withdrawal = new Withdrawal({blockNumber: UInt64.from(this.network.block.height), amount: withdrawAmount, receiver: member.address});
+        const withdrawal = new Withdrawal({ blockNumber: UInt64.from(this.network.block.height), amount: withdrawAmount, receiver: member.address });
         this.withdrawals.set(identityCommitment, withdrawal);
     }
 
@@ -158,14 +162,14 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const FREEZE_PERIOD = this.FREEZE_PERIOD.get().value;
         const withdrawal = this.withdrawals.get(identityCommitment).value;
         const blockNumber = UInt64.from(withdrawal.blockNumber);
-   
+
         blockNumber.value.assertNotEquals(Field.from(0), 'MRLN: no such withdrawals')
         assert(UInt64.from(this.network.block.height).sub(blockNumber).greaterThan(UInt64.from(FREEZE_PERIOD)));
-        
-        const newWithdrawalState = new Withdrawal({blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: new PublicKey(0)})
+
+        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: new PublicKey(0) })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
 
-        const newMemberState = new User({address: new PublicKey(0), messageLimit: UInt64.from(0), index: UInt64.from(0)})
+        const newMemberState = new User({ address: new PublicKey(0), messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
         this.balances.addBalance(TokenId.from(1), withdrawal.receiver, withdrawal.amount);
@@ -181,10 +185,10 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         proof.verify();
 
-        const newWithdrawalState = new Withdrawal({blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: new PublicKey(0)})
+        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: new PublicKey(0) })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
 
-        const newMemberState = new User({address: new PublicKey(0), messageLimit: UInt64.from(0), index: UInt64.from(0)})
+        const newMemberState = new User({ address: new PublicKey(0), messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
         const FEE_RECEIVER = this.FEE_RECEIVER.get().value;
@@ -197,7 +201,5 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.balances.addBalance(TokenId.from(1), FEE_RECEIVER, feeAmount);
 
     }
-
-
 
 }
