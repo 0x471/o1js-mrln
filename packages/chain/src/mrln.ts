@@ -106,7 +106,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     public constructor(@inject("Balances") public balances: Balances,
         minimalDeposit: Field,
         maximalRate: Field,
-        depth: Field,
+        depth: number,
         feePercentage: Field,
         feeReceiver: PublicKey,
         freezePeriod: Field) {
@@ -114,8 +114,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.MINIMAL_DEPOSIT.set(minimalDeposit);
         this.MAXIMAL_RATE.set(maximalRate);
         assert(feeReceiver.isEmpty().equals(false));
-        // Gadgets.leftShift64
-        //this.SET_SIZE.set(Gadgets.)  setsize =  1 << depth
+        this.SET_SIZE.set(Field(2 ^ depth)); // 1 << depth
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);
