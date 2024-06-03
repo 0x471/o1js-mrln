@@ -8,15 +8,12 @@ import { State, StateMap, assert } from "@proto-kit/protocol";
 import { UInt64, TokenId } from "@proto-kit/library"
 import { inject } from "tsyringe";
 import {
-    Bool,
     Experimental,
     Field,
     MerkleWitness,
-    Nullifier,
     Poseidon,
     Struct,
     PublicKey,
-    //Gadgets
 } from "o1js";
 import { Balances } from "./balances";
 
