@@ -1,0 +1,121 @@
+λ ~/Documents/all/dev/rln-o1js-up/ main* pnpm test
+
+> starter-kit@ test /Users/d0x471b/Documents/all/dev/rln-o1js-up
+> turbo run test
+
+• Packages in scope: chain, eslint-config-custom, tsconfig, web
+• Running test in 4 packages
+• Remote caching disabled
+┌ chain#test > cache hit (outputs already on disk), replaying logs f2ae0b6c323f736e
+│
+│ > chain@1.0.0 test /Users/d0x471b/Documents/all/dev/rln-o1js-up/packages/chain
+│ > node --experimental-vm-modules --experimental-wasm-modules  ./node_modules/jest/bin/jest.js
+│
+│ (node:19652) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+│ (Use `node --trace-warnings ...` to show where the warning was created)
+│ (node:19652) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+│  PASS  test/balances.test.ts
+│ (node:19651) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+│ (Use `node --trace-warnings ...` to show where the warning was created)
+│ (node:19651) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+│  PASS  test/contract.test.ts
+│   ● Console
+│
+│     console.error
+│       Error in inclusion of tx, skipping TypeError: Cannot read properties of undefined (reading 'from')
+│           at UInt64.divMod (o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/library/dist/math/UInt.js
+│ :62:35)
+│           at UInt64.div (o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/library/dist/math/UInt.js:98
+│ :21)
+│           at MRLNContract.register (o1js-up/packages/chain/src/mrln.ts:138:37)
+│           at MRLNContract.value (o1js-up/node_modules/.pnpm/@proto-kit+module@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+protocol@0_zdqfixn2lotnzu6mmutie3jpha/node_modules/@proto-kit/module/dist/method/r
+│ untimeMethod.js:150:34)
+│           at wrapped_register (o1js-up/node_modules/.pnpm/@proto-kit+module@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+protocol@0_zdqfixn2lotnzu6mmutie3jpha/node_modules/@proto-kit/module/dist/method/run
+│ timeMethod.js:25:17)
+│           at /Users/d0x471b/Documents/all/dev/rln-o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/proof_system.ts:582:14
+│           at /Users/d0x471b/Documents/all/dev/rln-o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/provable-context.ts:94:16
+│           at mark_active (src/lib/snarky/src/base/snark0.ml:1167:19)
+│           at _o8x_ (src/lib/snarky/src/base/snark0.ml:1287:52)
+│           at as_stateful (src/lib/snarky/src/base/snark0.ml:755:15)
+│           at constraint_system (src/lib/snarky/src/base/runners.ml:263:7)
+│           at /workspace_root/src/lib/snarky/src/base/snark0.ml:1287:19
+│           at finalize_is_running (src/lib/snarky/src/base/snark0.ml:1272:15)
+│           at constraint_system (src/lib/snarky/src/base/snark0.ml:1286:7)
+│           at Object.constraintSystem (o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/provable-context.ts:93:45)
+│           at analyzeMethod (o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/proof_system.ts:578:19)
+│           at /Users/d0x471b/Documents/all/dev/rln-o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/proof_system.ts:357:7
+│           at Array.map (<anonymous>)
+│           at Object.analyzeMethods (o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/proof_system.ts:356:24)
+│           at RuntimeFeeAnalyzerService.createFeeTree (o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit
+│ /library/dist/hooks/RuntimeFeeAnalyzerService.js:63:71)
+│           at RuntimeFeeAnalyzerService.get feeTree [as feeTree] (o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules
+│ /@proto-kit/library/dist/hooks/RuntimeFeeAnalyzerService.js:108:42)
+│           at RuntimeFeeAnalyzerService.getFeeConfig (o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/
+│ library/dist/hooks/RuntimeFeeAnalyzerService.js:113:32)
+│           at /Users/d0x471b/Documents/all/dev/rln-o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/lib
+│ rary/dist/hooks/TransactionFeeHook.js:80:88
+│           at Object.witness (o1js-up/node_modules/.pnpm/o1js@0.13.1/node_modules/o1js/src/lib/provable.ts:200:24)
+│           at TransactionFeeHook.onTransaction (o1js-up/node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/librar
+│ y/dist/hooks/TransactionFeeHook.js:80:36)
+│           at /Users/d0x471b/Documents/all/dev/rln-o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/seq
+│ uencer/dist/protocol/production/unproven/TransactionExecutionService.js:267:33
+│           at Array.forEach (<anonymous>)
+│           at /Users/d0x471b/Documents/all/dev/rln-o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/seq
+│ uencer/dist/protocol/production/unproven/TransactionExecutionService.js:266:35
+│           at RuntimeMethodExecution.executeMethodWithKeys (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@prot
+│ o-kit/sequencer/dist/protocol/production/unproven/RuntimeMethodExecution.js:20:9)
+│           at RuntimeMethodExecution.simulateMultiRound (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-k
+│ it/sequencer/dist/protocol/production/unproven/RuntimeMethodExecution.js:44:43)
+│           at TransactionExecutionService.extractAccessedKeys (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@p
+│ roto-kit/sequencer/dist/protocol/production/unproven/TransactionExecutionService.js:265:71)
+│           at processTicksAndRejections (node:internal/process/task_queues:95:5)
+│           at TransactionExecutionService.createExecutionTrace (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@
+│ proto-kit/sequencer/dist/protocol/production/unproven/TransactionExecutionService.js:295:47)
+│           at TransactionExecutionService.createUnprovenBlock (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@p
+│ roto-kit/sequencer/dist/protocol/production/unproven/TransactionExecutionService.js:134:40)
+│           at UnprovenProducerModule.produceUnprovenBlock (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto
+│ -kit/sequencer/dist/protocol/production/unproven/UnprovenProducerModule.js:95:23)
+│           at UnprovenProducerModule.tryProduceUnprovenBlock (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@pr
+│ oto-kit/sequencer/dist/protocol/production/unproven/UnprovenProducerModule.js:38:31)
+│           at ManualBlockTrigger.produceUnproven (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/sequ
+│ encer/dist/protocol/production/trigger/BlockTrigger.js:27:31)
+│           at ManualBlockTrigger.produceUnproven (o1js-up/node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/sequ
+│ encer/dist/protocol/production/trigger/ManualBlockTrigger.js:37:16)
+│           at TestingAppChain.produceBlock (o1js-up/node_modules/.pnpm/@proto-kit+sdk@0.1.1-develop.651_@proto-kit+api@0.1.1-develop.651_@proto-kit+common@0.1.1-dev_4jrmdt6zhz3ejsyfjzretz6du4/node_modules/@proto-kit/sdk/dist/a
+│ ppChain/TestingAppChain.js:77:16)
+│           at Object.<anonymous> (o1js-up/packages/chain/test/contract.test.ts:65:9)
+│
+│       63 |           await tx1.sign();
+│       64 |           await tx1.send();
+│     > 65 |         await appChain.produceBlock();
+│          |         ^
+│       66 |
+│       67 |         const minimalDepositState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
+│       68 |         const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
+│
+│       at Object.error (../../node_modules/.pnpm/@proto-kit+common@0.1.1-develop.651_o1js@0.13.1_tsyringe@4.8.0/node_modules/@proto-kit/common/dist/log.js:49:18)
+│       at TransactionExecutionService.createUnprovenBlock (../../node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-k
+│ it/sequencer/dist/protocol/production/unproven/TransactionExecutionService.js:148:25)
+│       at UnprovenProducerModule.produceUnprovenBlock (../../node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/s
+│ equencer/dist/protocol/production/unproven/UnprovenProducerModule.js:95:23)
+│       at UnprovenProducerModule.tryProduceUnprovenBlock (../../node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-ki
+│ t/sequencer/dist/protocol/production/unproven/UnprovenProducerModule.js:38:31)
+│       at ManualBlockTrigger.produceUnproven (../../node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/sequencer/
+│ dist/protocol/production/trigger/BlockTrigger.js:27:31)
+│       at ManualBlockTrigger.produceUnproven (../../node_modules/.pnpm/@proto-kit+sequencer@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@_m2lrkxytthpfgsbr6lqbxrzxwa/node_modules/@proto-kit/sequencer/
+│ dist/protocol/production/trigger/ManualBlockTrigger.js:37:16)
+│       at TestingAppChain.produceBlock (../../node_modules/.pnpm/@proto-kit+sdk@0.1.1-develop.651_@proto-kit+api@0.1.1-develop.651_@proto-kit+common@0.1.1-dev_4jrmdt6zhz3ejsyfjzretz6du4/node_modules/@proto-kit/sdk/dist/appChai
+│ n/TestingAppChain.js:77:16)
+│       at Object.<anonymous> (test/contract.test.ts:65:9)
+│
+│     console.log
+│       undefined undefined undefined undefined undefined undefined
+│
+│       at Object.<anonymous> (test/contract.test.ts:75:17)
+│
+│
+│ Test Suites: 2 passed, 2 total
+│ Tests:       3 passed, 3 total
+│ Snapshots:   0 total
+│ Time:        4.735 s, estimated 5 s
+│ Ran all test suites.

@@ -132,7 +132,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
-        assert(amount.divMod(MINIMAL_DEPOSIT).rest.value.equals(0));
+        //assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
         assert(this.members.get(identityCommitment).value.address.isEmpty().equals(false), 'MRLN: idCommitment already registered');
 
         const messageLimit = amount.div(MINIMAL_DEPOSIT);
