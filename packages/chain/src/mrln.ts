@@ -85,7 +85,8 @@ export class Withdrawal extends Struct({
     receiver: PublicKey
 }) { }
 
-export class MRLNContractConfig { }
+export class MRLNContractConfig {
+ }
 @runtimeModule()
 export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @state() public MINIMAL_DEPOSIT = State.from<Field>(Field);
@@ -101,18 +102,21 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @state() public withdrawals = StateMap.from(UInt64, Withdrawal)
 
     // TODO: events?
-    public constructor(@inject("Balances") public balances: Balances,
-        minimalDeposit: Field,
+    public constructor(@inject("Balances") public balances: Balances) {
+        super();
+      }
+
+    @runtimeMethod()
+    public init(minimalDeposit: Field,
         maximalRate: Field,
-        depth: number,
+        depth: UInt64,
         feePercentage: Field,
         feeReceiver: PublicKey,
         freezePeriod: Field) {
-        super();
         this.MINIMAL_DEPOSIT.set(minimalDeposit);
         this.MAXIMAL_RATE.set(maximalRate);
         assert(feeReceiver.isEmpty().equals(false));
-        this.SET_SIZE.set(Field(2 ^ depth)); // 1 << depth
+        this.SET_SIZE.set(new Field(UInt64.from(2).toBigInt() ^ depth.toBigInt())); // 1 << depth
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);

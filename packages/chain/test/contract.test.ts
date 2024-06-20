@@ -29,19 +29,13 @@ describe("mrln contract", () => {
 
         const receiver = PrivateKey.random()
         const feeReceiver = receiver.toPublicKey();
-
+        const depth = 20;
         appChain.configurePartial({
             Runtime: {
                 Balances: {
                     totalSupply: UInt64.from(10000),
                 },
                 MRLNContract: {
-                    minimalDeposit: new Field(minimalDeposit),
-                    maximalRate: new Field(maximalRate),
-                    depth: new Field(depth),
-                    feePercentage: new Field(feePercentage),
-                    feeReceiver: feeReceiver,
-                    freezePeriod: freezePeriod
                 }
             },
         });
@@ -54,13 +48,13 @@ describe("mrln contract", () => {
 
         appChain.setSigner(alicePrivateKey);
 
-        const balances = appChain.runtime.resolve("MRLNContract");
-        const minimal_deposit = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE;
-        const maximal_rate = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE;
-        const set_size = await appChain.query.runtime.MRLNContract.SET_SIZE;
-        const fee_percentage = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE;
-        const fee_receiver = await appChain.query.runtime.MRLNContract.FEE_RECEIVER;
-        const freeze_period =  await appChain.query.runtime.MRLNContract.FREEZE_PERIOD;
+        // const balances = appChain.runtime.resolve("MRLNContract");
+        // const minimal_deposit = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE;
+        // const maximal_rate = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE;
+        // const set_size = await appChain.query.runtime.MRLNContract.SET_SIZE;
+        // const fee_percentage = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE;
+        // const fee_receiver = await appChain.query.runtime.MRLNContract.FEE_RECEIVER;
+        // const freeze_period =  await appChain.query.runtime.MRLNContract.FREEZE_PERIOD;
     });
 });
 
