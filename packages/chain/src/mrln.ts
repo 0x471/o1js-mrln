@@ -109,14 +109,14 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @runtimeMethod()
     public init(minimalDeposit: Field,
         maximalRate: Field,
-        depth: UInt64,
-        feePercentage: Field,
+        setSize: Field,
+        feePercentage: Field,   
         feeReceiver: PublicKey,
         freezePeriod: Field) {
         this.MINIMAL_DEPOSIT.set(minimalDeposit);
         this.MAXIMAL_RATE.set(maximalRate);
         assert(feeReceiver.isEmpty().equals(false));
-        this.SET_SIZE.set(new Field(UInt64.from(2).toBigInt() ^ depth.toBigInt())); // 1 << depth
+        this.SET_SIZE.set(setSize); // 1 << depth
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);

@@ -27,9 +27,7 @@ describe("mrln contract", () => {
             MRLNContract
         });
 
-        const receiver = PrivateKey.random()
-        const feeReceiver = receiver.toPublicKey();
-        const depth = 20;
+
         appChain.configurePartial({
             Runtime: {
                 Balances: {
@@ -42,19 +40,40 @@ describe("mrln contract", () => {
 
         await appChain.start();
 
+        const mrln = appChain.runtime.resolve("MRLNContract");
         const alicePrivateKey = PrivateKey.random();
         const alice = alicePrivateKey.toPublicKey();
-        const tokenId = TokenId.from(0);
 
         appChain.setSigner(alicePrivateKey);
 
-        // const balances = appChain.runtime.resolve("MRLNContract");
-        // const minimal_deposit = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE;
-        // const maximal_rate = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE;
-        // const set_size = await appChain.query.runtime.MRLNContract.SET_SIZE;
-        // const fee_percentage = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE;
-        // const fee_receiver = await appChain.query.runtime.MRLNContract.FEE_RECEIVER;
-        // const freeze_period =  await appChain.query.runtime.MRLNContract.FREEZE_PERIOD;
+        const minimalDeposit = new Field(100);
+        const maximalRate = new Field(1 << 16 - 1);
+        const depth = 20;
+        const setSize = new Field(2 ^ depth);
+        const feePercentage = new Field(10);
+        const freezePeriod = new Field(1)
+        const receiver = PrivateKey.random()
+        const feeReceiver = receiver.toPublicKey();
+
+    
+        const tx1 = await appChain.transaction(alice, () => {
+            mrln.init(minimalDeposit, maximalRate, setSize, feePercentage, feeReceiver, freezePeriod);
+          });
+      
+          await tx1.sign();
+          await tx1.send();
+        await appChain.produceBlock();
+
+        const minimalDepositState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
+        const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
+        const setSizeState = await appChain.query.runtime.MRLNContract.SET_SIZE.get();
+        const feePercentageState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
+        const feeReceiverState= await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
+        const freezePeriodState =  await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
+
+        // maximalRateState, setSizeState, feePercentageState, feePercentageState, freezePeriodState);
+        console.log(minimalDepositState, maximalRateState, setSizeState, feeReceiverState, feePercentageState, freezePeriodState);
+
     });
 });
 
