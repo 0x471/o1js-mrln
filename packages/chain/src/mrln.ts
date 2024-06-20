@@ -6,6 +6,7 @@ import {
 } from "@proto-kit/module";
 import { State, StateMap, assert } from "@proto-kit/protocol";
 import { UInt64, TokenId } from "@proto-kit/library"
+import "reflect-metadata";
 import { inject } from "tsyringe";
 import {
     Experimental,
