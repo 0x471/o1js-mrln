@@ -132,10 +132,10 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
-        //assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
+        assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
         assert(this.members.get(identityCommitment).value.address.isEmpty().equals(false), 'MRLN: idCommitment already registered');
 
-        const messageLimit = amount.div(MINIMAL_DEPOSIT);
+        const messageLimit = UInt64.from(amount.value).div(MINIMAL_DEPOSIT);
         assert(messageLimit.lessThanOrEqual(MAXIMAL_RATE), 'MRLN: message limit cannot be more than MAXIMAL_RATE');
 
         this.balances.removeBalance(TokenId.from(1), tx_sender, amount);
@@ -196,7 +196,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const MINIMAL_DEPOSIT = UInt64.from(this.FREEZE_PERIOD.get().value);
         const FEE_PERCENTAGE = UInt64.from(this.FEE_PERCENTAGE.get().value);
         const withdrawAmount = member.messageLimit.mul(MINIMAL_DEPOSIT);
-        const feeAmount = FEE_PERCENTAGE.mul(withdrawAmount).div(100);
+        const feeAmount = UInt64.from(FEE_PERCENTAGE.value).mul(withdrawAmount).div(100);
 
         this.balances.removeBalance(TokenId.from(1), member.address, feeAmount);
         this.balances.addBalance(TokenId.from(1), FEE_RECEIVER, feeAmount);
