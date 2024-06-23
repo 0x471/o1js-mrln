@@ -18,8 +18,6 @@ const freezePeriod = 1;
 const identityCommitment0 = 1234;
 const identityCommitment1 = 5678;
 
-
-
 describe("mrln contract", () => {
     it("test initial state", async () => {
         const appChain = TestingAppChain.fromRuntime({
@@ -71,13 +69,13 @@ describe("mrln contract", () => {
         const feeReceiverState= await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
         const freezePeriodState =  await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
 
-        console.log("minimalDeposit: ", minimalDepositState?.toBigInt());
-        console.log("maximalRate: ", maximalRateState?.toBigInt());
-        console.log("setSize: ", setSizeState?.toBigInt());
-        console.log("feePercentage: ", feePercentageState?.toBigInt());
-        console.log("feeReceiver: ", feeReceiverState);
-        console.log("freezePeriod: ", freezePeriodState?.toBigInt());
-
+        expect(minimalDepositState?.toBigInt()).toBe(minimalDeposit.toBigInt());
+        expect(maximalRateState?.toBigInt()).toBe(maximalRate.toBigInt());
+        expect(setSizeState?.toBigInt()).toBe(setSize.toBigInt());
+        expect(feePercentageState?.toBigInt()).toBe(feePercentage.toBigInt());
+        expect(feeReceiverState?.toJSON()).toBe(feeReceiver.toJSON());
+        expect(freezePeriodState?.toBigInt()).toBe(freezePeriod.toBigInt());
+          
     });
 });
 
