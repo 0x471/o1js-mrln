@@ -49,7 +49,7 @@ describe("mrln contract", () => {
         const minimalDeposit = new Field(100);
         const maximalRate = new Field(1 << 16 - 1);
         const depth = 20;
-        const setSize = new Field(2 ^ depth);
+        const setSize = new Field(1 << depth);
         const feePercentage = new Field(10);
         const freezePeriod = new Field(1)
         const receiver = PrivateKey.random()
@@ -64,15 +64,19 @@ describe("mrln contract", () => {
           await tx1.send();
         await appChain.produceBlock();
 
-        const minimalDepositState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
+        const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
         const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
         const setSizeState = await appChain.query.runtime.MRLNContract.SET_SIZE.get();
         const feePercentageState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
         const feeReceiverState= await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
         const freezePeriodState =  await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
 
-        // maximalRateState, setSizeState, feePercentageState, feePercentageState, freezePeriodState);
-        console.log(minimalDepositState, maximalRateState, setSizeState, feeReceiverState, feePercentageState, freezePeriodState);
+        console.log("minimalDeposit: ", minimalDepositState?.toBigInt());
+        console.log("maximalRate: ", maximalRateState?.toBigInt());
+        console.log("setSize: ", setSizeState?.toBigInt());
+        console.log("feePercentage: ", feePercentageState?.toBigInt());
+        console.log("feeReceiver: ", feeReceiverState);
+        console.log("freezePeriod: ", freezePeriodState?.toBigInt());
 
     });
 });

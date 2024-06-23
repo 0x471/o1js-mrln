@@ -113,6 +113,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         feePercentage: Field,   
         feeReceiver: PublicKey,
         freezePeriod: Field) {
+            
         this.MINIMAL_DEPOSIT.set(minimalDeposit);
         this.MAXIMAL_RATE.set(maximalRate);
         assert(feeReceiver.isEmpty().equals(false));
@@ -167,10 +168,10 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         blockNumber.value.assertNotEquals(Field.from(0), 'MRLN: no such withdrawals')
         assert(UInt64.from(this.network.block.height).sub(blockNumber).greaterThan(UInt64.from(FREEZE_PERIOD)));
 
-        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: new PublicKey(0) })
+        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: PublicKey.empty() })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
 
-        const newMemberState = new User({ address: new PublicKey(0), messageLimit: UInt64.from(0), index: UInt64.from(0) })
+        const newMemberState = new User({ address: PublicKey.empty(), messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
         this.balances.addBalance(TokenId.from(1), withdrawal.receiver, withdrawal.amount);
@@ -186,16 +187,16 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         proof.verify();
 
-        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: new PublicKey(0) })
+        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: PublicKey.empty() })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
 
-        const newMemberState = new User({ address: new PublicKey(0), messageLimit: UInt64.from(0), index: UInt64.from(0) })
+        const newMemberState = new User({ address: PublicKey.empty(), messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
         const FEE_RECEIVER = this.FEE_RECEIVER.get().value;
         const MINIMAL_DEPOSIT = UInt64.from(this.FREEZE_PERIOD.get().value);
         const FEE_PERCENTAGE = UInt64.from(this.FEE_PERCENTAGE.get().value);
-        const withdrawAmount = member.messageLimit.mul(MINIMAL_DEPOSIT);
+        const withdrawAmount = UInt64.from(member.messageLimit).mul(UInt64.from(MINIMAL_DEPOSIT.value));
         const feeAmount = UInt64.from(FEE_PERCENTAGE.value).mul(withdrawAmount).div(100);
 
         this.balances.removeBalance(TokenId.from(1), member.address, feeAmount);
