@@ -38,63 +38,63 @@ const addr = PublicKey.from({
 });
 
 describe("mrln contract", () => {
-    it("test initial state", async () => {
-        const appChain = TestingAppChain.fromRuntime({
-            Balances,
-            MRLNContract
-        });
+    // it("test initial state", async () => {
+    //     const appChain = TestingAppChain.fromRuntime({
+    //         Balances,
+    //         MRLNContract
+    //     });
 
 
-        appChain.configurePartial({
-            Runtime: {
-                Balances: {
-                    totalSupply: UInt64.from(10000),
-                },
-                MRLNContract: {
-                }
-            },
-        });
+    //     appChain.configurePartial({
+    //         Runtime: {
+    //             Balances: {
+    //                 totalSupply: UInt64.from(10000),
+    //             },
+    //             MRLNContract: {
+    //             }
+    //         },
+    //     });
 
-        await appChain.start();
+    //     await appChain.start();
 
-        const mrln = appChain.runtime.resolve("MRLNContract");
+    //     const mrln = appChain.runtime.resolve("MRLNContract");
 
 
-        appChain.setSigner(alicePrivateKey);
+    //     appChain.setSigner(alicePrivateKey);
 
-        const minimalDeposit = new Field(100);
-        const maximalRate = new Field(1 << 16 - 1);
-        const depth = 20;
-        const setSize = new Field(1 << depth);
-        const feePercentage = new Field(10);
-        const freezePeriod = new Field(1)
-        const receiver = PrivateKey.random()
-        const feeReceiver = receiver.toPublicKey();
+    //     const minimalDeposit = new Field(100);
+    //     const maximalRate = new Field(1 << 16 - 1);
+    //     const depth = 20;
+    //     const setSize = new Field(1 << depth);
+    //     const feePercentage = new Field(10);
+    //     const freezePeriod = new Field(1)
+    //     const receiver = PrivateKey.random()
+    //     const feeReceiver = receiver.toPublicKey();
 
-        const tx1 = await appChain.transaction(alice, () => {
-            mrln.init(addr, minimalDeposit, maximalRate, setSize, feePercentage, feeReceiver, freezePeriod);
-        });
+    //     const tx1 = await appChain.transaction(alice, () => {
+    //         mrln.init(addr, minimalDeposit, maximalRate, setSize, feePercentage, feeReceiver, freezePeriod);
+    //     });
 
-        await tx1.sign();
-        await tx1.send();
-        await appChain.produceBlock();
+    //     await tx1.sign();
+    //     await tx1.send();
+    //     await appChain.produceBlock();
 
-        const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
-        const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
-        const setSizeState = await appChain.query.runtime.MRLNContract.SET_SIZE.get();
-        const feePercentageState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
-        const feeReceiverState = await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
-        const freezePeriodState = await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
-        const mrlnAddrState = await appChain.query.runtime.MRLNContract.MRLN_ADDRESS.get();
-        expect(minimalDepositState?.toBigInt()).toBe(minimalDeposit.toBigInt());
-        expect(maximalRateState?.toBigInt()).toBe(maximalRate.toBigInt());
-        expect(setSizeState?.toBigInt()).toBe(setSize.toBigInt());
-        expect(feePercentageState?.toBigInt()).toBe(feePercentage.toBigInt());
-        expect(feeReceiverState?.toJSON()).toBe(feeReceiver.toJSON());
-        expect(freezePeriodState?.toBigInt()).toBe(freezePeriod.toBigInt());
-        expect(mrlnAddrState?.toJSON()).toBe(addr.toJSON());
+    //     const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
+    //     const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
+    //     const setSizeState = await appChain.query.runtime.MRLNContract.SET_SIZE.get();
+    //     const feePercentageState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
+    //     const feeReceiverState = await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
+    //     const freezePeriodState = await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
+    //     const mrlnAddrState = await appChain.query.runtime.MRLNContract.MRLN_ADDRESS.get();
+    //     expect(minimalDepositState?.toBigInt()).toBe(minimalDeposit.toBigInt());
+    //     expect(maximalRateState?.toBigInt()).toBe(maximalRate.toBigInt());
+    //     expect(setSizeState?.toBigInt()).toBe(setSize.toBigInt());
+    //     expect(feePercentageState?.toBigInt()).toBe(feePercentage.toBigInt());
+    //     expect(feeReceiverState?.toJSON()).toBe(feeReceiver.toJSON());
+    //     expect(freezePeriodState?.toBigInt()).toBe(freezePeriod.toBigInt());
+    //     expect(mrlnAddrState?.toJSON()).toBe(addr.toJSON());
 
-    }),
+    // }),
         it("test register succeeds", async () => {
             const appChain = TestingAppChain.fromRuntime({
                 Balances,
@@ -146,7 +146,7 @@ describe("mrln contract", () => {
             const feeReceiverState = await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
             const freezePeriodState = await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
             const mrlnAddrState = await appChain.query.runtime.MRLNContract.MRLN_ADDRESS.get();
-
+            console.log("ONE", minimalDepositState)
             expect(minimalDepositState?.toBigInt()).toBe(minimalDeposit.toBigInt());
             expect(maximalRateState?.toBigInt()).toBe(maximalRate.toBigInt());
             expect(setSizeState?.toBigInt()).toBe(setSize.toBigInt());
@@ -188,11 +188,10 @@ describe("mrln contract", () => {
             const balanceAliceBefore = await appChain.query.runtime.Balances.balances.get(keyAlice);
             const identityCommitmentIndexBefore =  await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
 
-            console.log(minimalDepositState?.toBigInt())
+            console.log("TWO", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
             const tx4 = await appChain.transaction(alice, () => {
                 mrln.register(UInt64.from(identityCommitmentAlice), UInt64.from(registerAmountAlice));
               });
-
               await tx4.sign();
               await tx4.send();
             await appChain.produceBlock();

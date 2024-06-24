@@ -126,13 +126,12 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);
-        console.log(this.MINIMAL_DEPOSIT.get().value);
 
     }
 
     @runtimeMethod()
     public register(identityCommitment: UInt64, amount: UInt64) {
-        console.log(this.MINIMAL_DEPOSIT.get().value)
+        console.log("THREE", this.MINIMAL_DEPOSIT.get().value)
         const index = UInt64.from(this.identityCommitmentIndex.get().value);
         const SET_SIZE = UInt64.from(this.SET_SIZE.get().value);
         const MINIMAL_DEPOSIT = UInt64.from(this.MINIMAL_DEPOSIT.get().value);
