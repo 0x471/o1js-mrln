@@ -133,9 +133,8 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     public register(identityCommitment: UInt64, amount: UInt64) {
         const index = UInt64.from(this.identityCommitmentIndex.get().value);
         const SET_SIZE = UInt64.from(this.SET_SIZE.get().value);
-        console.log(SET_SIZE.value, index.value)
         const MINIMAL_DEPOSIT = UInt64.from(this.MINIMAL_DEPOSIT.get().value);
-        console.log(this.MINIMAL_DEPOSIT.get().value)
+        console.log("register method", MINIMAL_DEPOSIT.value)
         const MAXIMAL_RATE = UInt64.from(this.MAXIMAL_RATE.get().value);
         const tx_sender = this.transaction.sender.value;
         const adressMRLN = this.MRLN_ADDRESS.get().value;
