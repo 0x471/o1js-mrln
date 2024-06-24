@@ -1,113 +1,72 @@
-λ ~/Documents/all/dev/rln-o1js-up/ main* pnpm test
-
 > starter-kit@ test /Users/d0x471b/Documents/all/dev/rln-o1js-up
 > turbo run test
 
 • Packages in scope: chain, eslint-config-custom, tsconfig, web
 • Running test in 4 packages
 • Remote caching disabled
-┌ chain#test > cache miss, executing 077efe6e20329819
+┌ chain#test > cache miss, executing 8eb69e79cfc2142f
 │
 │ > chain@1.0.0 test /Users/d0x471b/Documents/all/dev/rln-o1js-up/packages/chain
 │ > node --experimental-vm-modules --experimental-wasm-modules  ./node_modules/jest/bin/jest.js
 │
-│ (node:6997) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+│ (node:9422) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
 │ (Use `node --trace-warnings ...` to show where the warning was created)
-│ (node:6997) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+│ (node:9422) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
 │  PASS  test/balances.test.ts
-│ (node:6996) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+│ (node:9421) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
 │ (Use `node --trace-warnings ...` to show where the warning was created)
-│ (node:6996) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-│  FAIL  test/contract.test.ts (9.341 s)
+│ (node:9421) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+│  FAIL  test/contract.test.ts (7.643 s)
 │   ● Console
 │
 │     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
+│       THREE Field { value: [ 1, 96 ] }
 │
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 1, 27 ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
+│       at MRLNContract.register (src/mrln.ts:134:17)
 │           at Array.map (<anonymous>)
 │           at Array.forEach (<anonymous>)
 │
 │     console.log
-│       Field { value: [ 1, 96 ] }
+│       ONE Field { value: [ 0, [ 0, 100n ] ] }
 │
-│       at MRLNContract.register (src/mrln.ts:135:17)
-│           at Array.map (<anonymous>)
-│           at Array.forEach (<anonymous>)
+│       at Object.<anonymous> (test/contract.test.ts:149:21)
 │
 │     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       Field { value: [ 0, [ 0, 100n ] ] }
-│
-│       at MRLNContract.init (src/mrln.ts:129:17)
-│
-│     console.log
-│       100n
+│       TWO Field { value: [ 0, [ 0, 100n ] ] }
 │
 │       at Object.<anonymous> (test/contract.test.ts:191:21)
 │
 │     console.log
-│       Field { value: [ 0, [ 0, 0n ] ] }
+│       THREE Field { value: [ 0, [ 0, 0n ] ] }
 │
-│       at MRLNContract.register (src/mrln.ts:135:17)
+│       at MRLNContract.register (src/mrln.ts:134:17)
 │
 │   ● mrln contract › test register succeeds
 │
 │     RangeError: Division by zero
 │
-│       141 |         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
-│       142 |         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
-│     > 143 |         assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
+│       140 |         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
+│       141 |         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
+│     > 142 |         assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
 │           |                                          ^
-│       144 |         assert(this.members.get(identityCommitment).value.address.isEmpty().equals(false), 'MRLN: idCommitment already registered');
-│       145 |
-│       146 |         const messageLimit = UInt64.from(amount.value).div(MINIMAL_DEPOSIT);
+│       143 |         assert(this.members.get(identityCommitment).value.address.isEmpty().equals(false), 'MRLN: idCommitment already registered');
+│       144 |
+│       145 |         const messageLimit = UInt64.from(amount.value).div(MINIMAL_DEPOSIT);
 │
-│       at UInt64.divMod (../../node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/library/dist/math/UInt.js:66:24)
-│       at MRLNContract.register (src/mrln.ts:143:42)
-│       at MRLNContract.value (../../node_modules/.pnpm/@proto-kit+module@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+protocol@0_zdqfixn2lotnzu6mmutie3jpha/node_modules/@proto-kit/module/dist/method/runtimeMethod.js:150:34)
+│       at UInt64.divMod (../../node_modules/.pnpm/@proto-kit+library@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+module@0._uppjcefvt34cdfzlncb4dnwbga/node_modules/@proto-kit/library/dist/math/UInt.js:66:24
+│ )
+│       at MRLNContract.register (src/mrln.ts:142:42)
+│       at MRLNContract.value (../../node_modules/.pnpm/@proto-kit+module@0.1.1-develop.651_@proto-kit+common@0.1.1-develop.651_@proto-kit+protocol@0_zdqfixn2lotnzu6mmutie3jpha/node_modules/@proto-kit/module/dist/method/runtime
+│ Method.js:150:34)
 │       at test/contract.test.ts:193:22
-│       at TestingAppChain.transaction (../../node_modules/.pnpm/@proto-kit+sdk@0.1.1-develop.651_@proto-kit+api@0.1.1-develop.651_@proto-kit+common@0.1.1-dev_4jrmdt6zhz3ejsyfjzretz6du4/node_modules/@proto-kit/sdk/dist/appChain/AppChain.js:77:9)
+│       at TestingAppChain.transaction (../../node_modules/.pnpm/@proto-kit+sdk@0.1.1-develop.651_@proto-kit+api@0.1.1-develop.651_@proto-kit+common@0.1.1-dev_4jrmdt6zhz3ejsyfjzretz6du4/node_modules/@proto-kit/sdk/dist/appChain
+│ /AppChain.js:77:9)
 │       at Object.<anonymous> (test/contract.test.ts:192:40)
 │
 │ Test Suites: 1 failed, 1 passed, 2 total
-│ Tests:       1 failed, 3 passed, 4 total
+│ Tests:       1 failed, 2 passed, 3 total
 │ Snapshots:   0 total
-│ Time:        9.54 s, estimated 10 s
+│ Time:        7.816 s, estimated 9 s
 │ Ran all test suites.
 │  ELIFECYCLE  Test failed. See above for more details.
 │ command finished with error: command (/Users/d0x471b/Documents/all/dev/rln-o1js-up/packages/chain) /opt/homebrew/bin/pnpm run test exited (1)
