@@ -15,6 +15,8 @@ import {
     Poseidon,
     Struct,
     PublicKey,
+    Encoding,
+    Bool,
 } from "o1js";
 import { Balances } from "./balances";
 
@@ -86,7 +88,7 @@ export class Withdrawal extends Struct({
 }) { }
 
 export class MRLNContractConfig {
- }
+}
 @runtimeModule()
 export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @state() public MINIMAL_DEPOSIT = State.from<Field>(Field);
@@ -95,6 +97,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @state() public FEE_RECEIVER = State.from<PublicKey>(PublicKey);
     @state() public FEE_PERCENTAGE = State.from<Field>(Field);
     @state() public FREEZE_PERIOD = State.from<Field>(Field);
+    @state() public MRLN_ADDRESS = State.from<PublicKey>(PublicKey);
 
     @state() public identityCommitmentIndex = State.from<Field>(Field);
 
@@ -104,16 +107,18 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     // TODO: events?
     public constructor(@inject("Balances") public balances: Balances) {
         super();
-      }
+    }
 
     @runtimeMethod()
-    public init(minimalDeposit: Field,
+    public init(addr: PublicKey,
+        minimalDeposit: Field,
         maximalRate: Field,
         setSize: Field,
-        feePercentage: Field,   
+        feePercentage: Field,
         feeReceiver: PublicKey,
         freezePeriod: Field) {
-            
+
+        this.MRLN_ADDRESS.set(addr);
         this.MINIMAL_DEPOSIT.set(minimalDeposit);
         this.MAXIMAL_RATE.set(maximalRate);
         assert(feeReceiver.isEmpty().equals(false));
@@ -121,16 +126,18 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);
+        console.log(this.MINIMAL_DEPOSIT.get().value);
+
     }
 
     @runtimeMethod()
     public register(identityCommitment: UInt64, amount: UInt64) {
+        console.log(this.MINIMAL_DEPOSIT.get().value)
         const index = UInt64.from(this.identityCommitmentIndex.get().value);
         const SET_SIZE = UInt64.from(this.SET_SIZE.get().value);
         const MINIMAL_DEPOSIT = UInt64.from(this.MINIMAL_DEPOSIT.get().value);
         const MAXIMAL_RATE = UInt64.from(this.MAXIMAL_RATE.get().value);
         const tx_sender = this.transaction.sender.value;
-
         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
         assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
