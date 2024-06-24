@@ -5,7 +5,7 @@ import {
     state,
 } from "@proto-kit/module";
 import { State, StateMap, assert } from "@proto-kit/protocol";
-import { UInt64, TokenId } from "@proto-kit/library"
+import { UInt64, TokenId, UInt224 } from "@proto-kit/library"
 import "reflect-metadata";
 import { inject } from "tsyringe";
 import {
@@ -126,17 +126,19 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);
-
     }
+
 
     @runtimeMethod()
     public register(identityCommitment: UInt64, amount: UInt64) {
-        console.log("THREE", this.MINIMAL_DEPOSIT.get().value)
         const index = UInt64.from(this.identityCommitmentIndex.get().value);
         const SET_SIZE = UInt64.from(this.SET_SIZE.get().value);
+        console.log(SET_SIZE.value, index.value)
         const MINIMAL_DEPOSIT = UInt64.from(this.MINIMAL_DEPOSIT.get().value);
+        console.log(this.MINIMAL_DEPOSIT.get().value)
         const MAXIMAL_RATE = UInt64.from(this.MAXIMAL_RATE.get().value);
         const tx_sender = this.transaction.sender.value;
+        const adressMRLN = this.MRLN_ADDRESS.get().value;
         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
         assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
@@ -146,10 +148,10 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         assert(messageLimit.lessThanOrEqual(MAXIMAL_RATE), 'MRLN: message limit cannot be more than MAXIMAL_RATE');
 
         this.balances.removeBalance(TokenId.from(1), tx_sender, amount);
+        this.balances.addBalance(TokenId.from(1), adressMRLN, amount);
 
         const member = new User({ address: tx_sender, messageLimit: messageLimit, index: index });
         this.members.set(identityCommitment, member);
-
         this.identityCommitmentIndex.set(this.identityCommitmentIndex.get().value.add(1));
     }
 
