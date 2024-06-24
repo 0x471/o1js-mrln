@@ -188,7 +188,7 @@ describe("mrln contract", () => {
         const balanceAliceBefore = await appChain.query.runtime.Balances.balances.get(keyAlice);
         const identityCommitmentIndexBefore = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
 
-        console.log("before", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
+        console.log("before register tx", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
         const tx4 = await appChain.transaction(alice, () => {
             mrln.register(UInt64.from(identityCommitmentAlice), UInt64.from(registerAmountAlice));
         });
