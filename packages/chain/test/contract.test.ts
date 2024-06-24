@@ -137,7 +137,8 @@ describe("mrln contract", () => {
 
         await tx1.sign();
         await tx1.send();
-        await appChain.produceBlock();
+        await appChain.produceBlock()
+
 
         const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
         const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
@@ -188,21 +189,21 @@ describe("mrln contract", () => {
         const balanceAliceBefore = await appChain.query.runtime.Balances.balances.get(keyAlice);
         const identityCommitmentIndexBefore = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
 
-        console.log("before register tx", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
         const tx4 = await appChain.transaction(alice, () => {
             mrln.register(UInt64.from(identityCommitmentAlice), UInt64.from(registerAmountAlice));
         });
         await tx4.sign();
         await tx4.send();
+
         await appChain.produceBlock();
-        //console.log("after", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
-        //const balanceMRLNAfter= await appChain.query.runtime.Balances.balances.get(keyMRLN)
-        // if (balanceMRLNAfter == undefined) {
-        //     throw new Error("Balance MRLN After is undefined");
-        // }   
-        // console.log("balance MRLN AfteR: ", balanceMRLNAfter)
-        // const tokenMRLNDiff = balanceMRLNAfter.sub(balanceMRLNBefore);
-        // expect(tokenMRLNDiff).toBe(registerAmountAlice);
+        console.log("after", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
+        const balanceMRLNAfter= await appChain.query.runtime.Balances.balances.get(keyMRLN)
+        if (balanceMRLNAfter == undefined) {
+            throw new Error("Balance MRLN After is undefined");
+        }   
+        console.log("balance MRLN AfteR: ", balanceMRLNAfter)
+        const tokenMRLNDiff = balanceMRLNAfter.sub(balanceMRLNBefore);
+        expect(tokenMRLNDiff).toBe(registerAmountAlice);
 
 
     })

@@ -17,6 +17,7 @@ import {
     PublicKey,
     Encoding,
     Bool,
+    Provable,
 } from "o1js";
 import { Balances } from "./balances";
 
@@ -134,16 +135,18 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const index = UInt64.from(this.identityCommitmentIndex.get().value);
         const SET_SIZE = UInt64.from(this.SET_SIZE.get().value);
         const MINIMAL_DEPOSIT = UInt64.from(this.MINIMAL_DEPOSIT.get().value);
-        console.log("register method", MINIMAL_DEPOSIT.value)
+        const shouldPad = MINIMAL_DEPOSIT.equals(0);
+        const paddedDivisor = Provable.if(shouldPad, UInt64.from(1).value, MINIMAL_DEPOSIT.value);
+        
         const MAXIMAL_RATE = UInt64.from(this.MAXIMAL_RATE.get().value);
         const tx_sender = this.transaction.sender.value;
         const adressMRLN = this.MRLN_ADDRESS.get().value;
         assert(index.lessThan(SET_SIZE), 'MRLN: set is full');
         assert(amount.greaterThanOrEqual(MINIMAL_DEPOSIT), 'MRLN: amount is lower than minimal deposit');
-        assert(UInt64.from(amount.value).divMod(UInt64.from(MINIMAL_DEPOSIT.value)).rest.value.equals(0));
+        assert(UInt64.from(amount.value).divMod(UInt64.from(paddedDivisor)).rest.value.equals(0));
         assert(this.members.get(identityCommitment).value.address.isEmpty().equals(false), 'MRLN: idCommitment already registered');
 
-        const messageLimit = UInt64.from(amount.value).div(MINIMAL_DEPOSIT);
+        const messageLimit = UInt64.from(amount.value).div(UInt64.from(paddedDivisor));
         assert(messageLimit.lessThanOrEqual(MAXIMAL_RATE), 'MRLN: message limit cannot be more than MAXIMAL_RATE');
 
         this.balances.removeBalance(TokenId.from(1), tx_sender, amount);
