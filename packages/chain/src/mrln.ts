@@ -15,8 +15,6 @@ import {
     Poseidon,
     Struct,
     PublicKey,
-    Encoding,
-    Bool,
     Provable,
 } from "o1js";
 import { Balances } from "./balances";
@@ -55,7 +53,7 @@ export function RLN(
 
     // nullifier calculation
     const nullifier = Poseidon.hash([a1]);
-
+     
     return new MRLNCircuitPublicOutput({
         y: y,
         root: root,
@@ -149,8 +147,8 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const messageLimit = UInt64.from(amount.value).div(UInt64.from(paddedDivisor));
         assert(messageLimit.lessThanOrEqual(MAXIMAL_RATE), 'MRLN: message limit cannot be more than MAXIMAL_RATE');
 
-        this.balances.removeBalance(TokenId.from(1), tx_sender, amount);
-        this.balances.addBalance(TokenId.from(1), adressMRLN, amount);
+        // this.balances.removeBalance(TokenId.from(1), tx_sender, amount);
+        // this.balances.addBalance(TokenId.from(1), adressMRLN, amount);
 
         const member = new User({ address: tx_sender, messageLimit: messageLimit, index: index });
         this.members.set(identityCommitment, member);

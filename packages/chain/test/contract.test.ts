@@ -1,11 +1,10 @@
 import { TestingAppChain } from "@proto-kit/sdk";
-import { Bool, Encoding, Field, Poseidon, PublicKey } from "o1js";
+import { Bool, Field, Poseidon, PublicKey } from "o1js";
 import { PrivateKey } from "o1js";
 import { Balances } from "../src/balances";
 import { MRLNContract } from "../src/mrln";
-import { log, sleep } from "@proto-kit/common";
+import { log } from "@proto-kit/common";
 import { BalancesKey, TokenId, UInt64 } from "@proto-kit/library";
-import { emptyValue } from "o1js/dist/node/lib/proof_system";
 
 
 log.setLevel("ERROR");
@@ -200,8 +199,8 @@ describe("mrln contract", () => {
         const balanceMRLNAfter= await appChain.query.runtime.Balances.balances.get(keyMRLN)
         if (balanceMRLNAfter == undefined) {
             throw new Error("Balance MRLN After is undefined");
-        }   
-        console.log("balance MRLN AfteR: ", balanceMRLNAfter)
+        }
+        console.log("balance MRLN After: ", balanceMRLNAfter)
         const tokenMRLNDiff = balanceMRLNAfter.sub(balanceMRLNBefore);
         expect(tokenMRLNDiff).toBe(registerAmountAlice);
 
