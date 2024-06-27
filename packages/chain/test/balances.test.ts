@@ -15,7 +15,7 @@ describe("balances", () => {
     appChain.configurePartial({
       Runtime: {
         Balances: {
-          totalSupply: UInt64.from(10000),
+          totalSupply: UInt64.from(1000000000),
         },
       },
     });

@@ -9,18 +9,19 @@ import { BalancesKey, TokenId, UInt64 } from "@proto-kit/library";
 
 log.setLevel("ERROR");
 
-const rlnInitialTokenBalance = 1000000;
-const minimalDeposit = 100;
-const maximalRate = 1 << 16 - 1;
+const mrlnInitialTokenBalance = 1000000;
+const minimalDeposit = new Field(100);
+const maximalRate = new Field(1 << 16 - 1);
 const depth = 20;
-const feePercentage = 10;
-const freezePeriod = 1;
+const setSize = new Field(1 << depth);
+const feePercentage = new Field(10);
+const freezePeriod = new Field(1)
 
-const identityCommitmentAlice = 12n;
-const identityCommitmentBob = 34n;
+const identityCommitmentAlice = 1234;
+const identityCommitmentBob = 5678;
 
-const messageLimitAlice = 2n;
-const messageLimitBob = 3n;
+const messageLimitAlice = 2;
+const messageLimitBob = 3;
 
 const alicePrivateKey = PrivateKey.random();
 const alice = alicePrivateKey.toPublicKey();
@@ -37,63 +38,56 @@ const addr = PublicKey.from({
 });
 
 describe("mrln contract", () => {
-    // it("test initial state", async () => {
-    //     const appChain = TestingAppChain.fromRuntime({
-    //         Balances,
-    //         MRLNContract
-    //     });
+    it("test initial state", async () => {
+        const appChain = TestingAppChain.fromRuntime({
+            Balances,
+            MRLNContract
+        });
 
 
-    //     appChain.configurePartial({
-    //         Runtime: {
-    //             Balances: {
-    //                 totalSupply: UInt64.from(10000),
-    //             },
-    //             MRLNContract: {
-    //             }
-    //         },
-    //     });
+        appChain.configurePartial({
+            Runtime: {
+                Balances: {
+                    totalSupply: UInt64.from(1000000000),
+                },
+                MRLNContract: {
+                }
+            },
+        });
 
-    //     await appChain.start();
+        await appChain.start();
 
-    //     const mrln = appChain.runtime.resolve("MRLNContract");
+        const mrln = appChain.runtime.resolve("MRLNContract");
 
 
-    //     appChain.setSigner(alicePrivateKey);
+        appChain.setSigner(alicePrivateKey);
+        const receiver = PrivateKey.random()
+        const feeReceiver = receiver.toPublicKey();
 
-    //     const minimalDeposit = new Field(100);
-    //     const maximalRate = new Field(1 << 16 - 1);
-    //     const depth = 20;
-    //     const setSize = new Field(1 << depth);
-    //     const feePercentage = new Field(10);
-    //     const freezePeriod = new Field(1)
-    //     const receiver = PrivateKey.random()
-    //     const feeReceiver = receiver.toPublicKey();
+        const tx1 = await appChain.transaction(alice, () => {
+            mrln.init(addr, minimalDeposit, maximalRate, setSize, feePercentage, feeReceiver, freezePeriod);
+        });
 
-    //     const tx1 = await appChain.transaction(alice, () => {
-    //         mrln.init(addr, minimalDeposit, maximalRate, setSize, feePercentage, feeReceiver, freezePeriod);
-    //     });
+        await tx1.sign();
+        await tx1.send();
+        await appChain.produceBlock();
 
-    //     await tx1.sign();
-    //     await tx1.send();
-    //     await appChain.produceBlock();
+        const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
+        const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
+        const setSizeState = await appChain.query.runtime.MRLNContract.SET_SIZE.get();
+        const feePercentageState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
+        const feeReceiverState = await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
+        const freezePeriodState = await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
+        const mrlnAddrState = await appChain.query.runtime.MRLNContract.MRLN_ADDRESS.get();
+        expect(minimalDepositState?.toBigInt()).toBe(minimalDeposit.toBigInt());
+        expect(maximalRateState?.toBigInt()).toBe(maximalRate.toBigInt());
+        expect(setSizeState?.toBigInt()).toBe(setSize.toBigInt());
+        expect(feePercentageState?.toBigInt()).toBe(feePercentage.toBigInt());
+        expect(feeReceiverState?.toJSON()).toBe(feeReceiver.toJSON());
+        expect(freezePeriodState?.toBigInt()).toBe(freezePeriod.toBigInt());
+        expect(mrlnAddrState?.toJSON()).toBe(addr.toJSON());
 
-    //     const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
-    //     const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
-    //     const setSizeState = await appChain.query.runtime.MRLNContract.SET_SIZE.get();
-    //     const feePercentageState = await appChain.query.runtime.MRLNContract.FEE_PERCENTAGE.get();
-    //     const feeReceiverState = await appChain.query.runtime.MRLNContract.FEE_RECEIVER.get();
-    //     const freezePeriodState = await appChain.query.runtime.MRLNContract.FREEZE_PERIOD.get();
-    //     const mrlnAddrState = await appChain.query.runtime.MRLNContract.MRLN_ADDRESS.get();
-    //     expect(minimalDepositState?.toBigInt()).toBe(minimalDeposit.toBigInt());
-    //     expect(maximalRateState?.toBigInt()).toBe(maximalRate.toBigInt());
-    //     expect(setSizeState?.toBigInt()).toBe(setSize.toBigInt());
-    //     expect(feePercentageState?.toBigInt()).toBe(feePercentage.toBigInt());
-    //     expect(feeReceiverState?.toJSON()).toBe(feeReceiver.toJSON());
-    //     expect(freezePeriodState?.toBigInt()).toBe(freezePeriod.toBigInt());
-    //     expect(mrlnAddrState?.toJSON()).toBe(addr.toJSON());
-
-    // }),
+    }),
     it("test register succeeds", async () => {
         const appChain = TestingAppChain.fromRuntime({
             Balances,
@@ -104,7 +98,7 @@ describe("mrln contract", () => {
         appChain.configurePartial({
             Runtime: {
                 Balances: {
-                    totalSupply: UInt64.from(1000000),
+                    totalSupply: UInt64.from(1000000000000),
                 },
                 MRLNContract: {
                 }
@@ -120,12 +114,6 @@ describe("mrln contract", () => {
 
         appChain.setSigner(alicePrivateKey);
 
-        const minimalDeposit = new Field(100);
-        const maximalRate = new Field(1 << 16 - 1);
-        const depth = 20;
-        const setSize = new Field(1 << depth);
-        const feePercentage = new Field(10);
-        const freezePeriod = new Field(1)
         const receiver = PrivateKey.random()
         const feeReceiver = receiver.toPublicKey();
 
@@ -136,8 +124,8 @@ describe("mrln contract", () => {
 
         await tx1.sign();
         await tx1.send();
-        await appChain.produceBlock()
-
+        const block1 = await appChain.produceBlock()
+        block1?.transactions[0].status.assertEquals(true);
 
         const minimalDepositState = await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get();
         const maximalRateState = await appChain.query.runtime.MRLNContract.MAXIMAL_RATE.get();
@@ -157,54 +145,62 @@ describe("mrln contract", () => {
         if (mrlnAddrState == undefined) {
             throw new Error("MRLN Address is undefined");
         }
-        const registerAmountAlice = messageLimitAlice * minimalDeposit.toBigInt();
-        const registerAmountBob = messageLimitBob * minimalDeposit.toBigInt();
+        const registerAmountAlice = BigInt(messageLimitAlice) * minimalDeposit.toBigInt();
 
         const tokenId = TokenId.from(0);
-        const tx2 = await appChain.transaction(alice, () => {
-            balances.addBalance(tokenId, alice, UInt64.from(registerAmountAlice));
-        });
 
+        const tx2 = await appChain.transaction(alice, () => {
+            balances.addBalance(tokenId, mrlnAddrState, UInt64.from(mrlnInitialTokenBalance));
+        });
         await tx2.sign();
         await tx2.send();
-        await appChain.produceBlock();
-
-        const tx3 = await appChain.transaction(alice, () => {
-            balances.addBalance(tokenId, mrlnAddrState, UInt64.from(1));
-        });
-
-        await tx3.sign();
-        await tx3.send();
-        await appChain.produceBlock();
-
+        const block2 = await appChain.produceBlock();
+        block2?.transactions[0].status.assertEquals(true);
 
         const keyMRLN = new BalancesKey({ tokenId, address: mrlnAddrState });
         const balanceMRLNBefore = await appChain.query.runtime.Balances.balances.get(keyMRLN);
         if (balanceMRLNBefore == undefined) {
             throw new Error("Balance MRLN Before is undefined");
         }
+        //expect(balanceMRLNBefore.value.toString()).toBe(mrlnInitialTokenBalance.toString());
+        console.log("MRLN BALANCE: BEFORE: ", balanceMRLNBefore.toString())
+        const tx3 = await appChain.transaction(alice, () => {
+            balances.addBalance(tokenId, alice, UInt64.from(registerAmountAlice));
+        });
+        await tx3.sign();
+        await tx3.send();
+        const block3 = await appChain.produceBlock();
+        block3?.transactions[0].status.assertEquals(true);
 
         const keyAlice = new BalancesKey({ tokenId, address: alice });
         const balanceAliceBefore = await appChain.query.runtime.Balances.balances.get(keyAlice);
-        const identityCommitmentIndexBefore = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
+        if (balanceAliceBefore == undefined) {
+            throw new Error("Balance Alice before is undefined")
+        }
+        console.log("ALICE BALANCE: BEFORE:", balanceAliceBefore.toString())
+        //const identityCommitmentIndexBefore = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
 
         const tx4 = await appChain.transaction(alice, () => {
             mrln.register(UInt64.from(identityCommitmentAlice), UInt64.from(registerAmountAlice));
         });
         await tx4.sign();
         await tx4.send();
+        const block4 = await appChain.produceBlock();
+        block4?.transactions[0].status.assertEquals(true);
 
-        await appChain.produceBlock();
-        console.log("after", await appChain.query.runtime.MRLNContract.MINIMAL_DEPOSIT.get())
-        const balanceMRLNAfter= await appChain.query.runtime.Balances.balances.get(keyMRLN)
+        const balanceMRLNAfter = await appChain.query.runtime.Balances.balances.get(keyMRLN)
         if (balanceMRLNAfter == undefined) {
             throw new Error("Balance MRLN After is undefined");
         }
-        console.log("balance MRLN After: ", balanceMRLNAfter)
-        const tokenMRLNDiff = balanceMRLNAfter.sub(balanceMRLNBefore);
-        expect(tokenMRLNDiff).toBe(registerAmountAlice);
+        console.log("MRLN BALANCE: AFTER: ", balanceMRLNAfter.toString())
+        const tokenMRLNDiff = balanceMRLNAfter.value.sub(balanceMRLNBefore.value);
+        expect(tokenMRLNDiff.toString()).toBe(registerAmountAlice.toString());
 
-
+        const balanceAliceAfter = await appChain.query.runtime.Balances.balances.get(keyAlice);
+        if (balanceAliceAfter == undefined) {
+            throw new Error("Balance Alice after is undefined")
+        }
+        console.log("ALICE BALANCE: AFTER:", balanceAliceBefore.toString())
     })
 });
 
