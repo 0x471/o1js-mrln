@@ -104,15 +104,15 @@ describe("mrln contract", () => {
 
         const mrln = appChain.runtime.resolve("MRLNContract");
         const balances = appChain.runtime.resolve("Balances");
+
         const alicePrivateKey = PrivateKey.random();
         const alice = alicePrivateKey.toPublicKey();
-
         appChain.setSigner(alicePrivateKey);
 
         const receiver = PrivateKey.random()
         const feeReceiver = receiver.toPublicKey();
 
-
+        // MRLN: Init
         const tx1 = await appChain.transaction(alice, () => {
             mrln.init(addr, minimalDeposit, maximalRate, setSize, feePercentage, feeReceiver, freezePeriod);
         });
@@ -140,10 +140,11 @@ describe("mrln contract", () => {
         if (mrlnAddrState == undefined) {
             throw new Error("MRLN Address is undefined");
         }
-        const registerAmountAlice = BigInt(messageLimitAlice) * minimalDeposit.toBigInt();
+
 
         const tokenId = TokenId.from(0);
 
+        // MRLN: Add Balance
         const tx2 = await appChain.transaction(alice, () => {
             balances.addBalance(tokenId, mrlnAddrState, UInt64.from(mrlnInitialTokenBalance));
         });
@@ -153,12 +154,15 @@ describe("mrln contract", () => {
         block2?.transactions[0].status.assertEquals(true);
 
         const keyMRLN = new BalancesKey({ tokenId, address: mrlnAddrState });
-        const balanceMRLNBefore = await appChain.query.runtime.Balances.balances.get(keyMRLN);
-        if (balanceMRLNBefore == undefined) {
+        const balanceMRLNBeforeAlice = await appChain.query.runtime.Balances.balances.get(keyMRLN);
+        if (balanceMRLNBeforeAlice == undefined) {
             throw new Error("Balance MRLN Before is undefined");
         }
-        expect(balanceMRLNBefore.value.toString()).toBe(mrlnInitialTokenBalance.toString());
-        console.log("MRLN BALANCE: BEFORE: ", balanceMRLNBefore.toString())
+        expect(balanceMRLNBeforeAlice.value.toString()).toBe(mrlnInitialTokenBalance.toString());
+
+        // Alice: Add Balance 
+        const registerAmountAlice = BigInt(messageLimitAlice) * minimalDeposit.toBigInt();
+
         const tx3 = await appChain.transaction(alice, () => {
             balances.addBalance(tokenId, alice, UInt64.from(registerAmountAlice));
         });
@@ -170,14 +174,14 @@ describe("mrln contract", () => {
         const keyAlice = new BalancesKey({ tokenId, address: alice });
         const balanceAliceBefore = await appChain.query.runtime.Balances.balances.get(keyAlice);
         if (balanceAliceBefore == undefined) {
-            throw new Error("Balance Alice before is undefined")
-        }
-        console.log("ALICE BALANCE: BEFORE:", balanceAliceBefore.toString())
-        const identityCommitmentIndexBefore = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
-        if (identityCommitmentIndexBefore == undefined) {
-            throw new Error("identityCommitmentIndexBefore is undefined");
+            throw new Error("Balance Alice Before is undefined")
         }
 
+        // Alice: Register 
+        const identityCommitmentBeforeAlice = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
+        if (identityCommitmentBeforeAlice == undefined) {
+            throw new Error("identityCommitmentBeforeAlice is undefined");
+        }
         const tx4 = await appChain.transaction(alice, () => {
             mrln.register(UInt64.from(identityCommitmentAlice), UInt64.from(registerAmountAlice));
         });
@@ -185,33 +189,100 @@ describe("mrln contract", () => {
         await tx4.send();
         const block4 = await appChain.produceBlock();
         block4?.transactions[0].status.assertEquals(true);
-        const balanceMRLNAfter = await appChain.query.runtime.Balances.balances.get(keyMRLN)
-        if (balanceMRLNAfter == undefined) {
+
+        const balanceMRLNAfterAlice = await appChain.query.runtime.Balances.balances.get(keyMRLN)
+        if (balanceMRLNAfterAlice == undefined) {
             throw new Error("Balance MRLN After is undefined");
         }
-        console.log("MRLN BALANCE: AFTER: ", balanceMRLNAfter.toString())
-        const tokenMRLNDiff = balanceMRLNAfter.value.sub(balanceMRLNBefore.value);
-        expect(tokenMRLNDiff.toString()).toBe(registerAmountAlice.toString());
+        const tokenMRLNDiffAlice = balanceMRLNAfterAlice.value.sub(balanceMRLNBeforeAlice.value);
+        expect(tokenMRLNDiffAlice.toString()).toBe(registerAmountAlice.toString());
 
-        const identityCommitmentIndexAfter = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
-        identityCommitmentIndexAfter?.assertEquals((identityCommitmentIndexBefore.add(new Field(1))));
+        const identityCommitmentAfterAlice = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
+        identityCommitmentAfterAlice?.assertEquals((identityCommitmentBeforeAlice.add(new Field(1))));
 
         const balanceAliceAfter = await appChain.query.runtime.Balances.balances.get(keyAlice);
         if (balanceAliceAfter == undefined) {
-            throw new Error("Balance Alice after is undefined")
+            throw new Error("Balance Alice After is undefined")
         }
         const tokenAliceDiff = balanceAliceBefore.value.sub(balanceAliceAfter.value);
         expect(tokenAliceDiff.toString()).toBe(registerAmountAlice.toString());
-        console.log("ALICE BALANCE: AFTER:", balanceAliceAfter.toString())
-        expect(tokenAliceDiff.toString()).toBe(registerAmountAlice.toString());
 
-        const member = await appChain.query.runtime.MRLNContract.members.get(UInt64.from(identityCommitmentAlice));
-        expect(member?.address.toJSON()).toBe(alice.toJSON());
-        member?.index.value.assertEquals(identityCommitmentIndexBefore);
-        expect(member?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitAlice));
+        const memberAlice = await appChain.query.runtime.MRLNContract.members.get(UInt64.from(identityCommitmentAlice));
+        expect(memberAlice?.address.toJSON()).toBe(alice.toJSON());
+        memberAlice?.index.value.assertEquals(identityCommitmentBeforeAlice);
+        expect(memberAlice?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitAlice));
+
+        const balanceMRLNBeforeBob = await appChain.query.runtime.Balances.balances.get(keyMRLN);
+        if (balanceMRLNBeforeBob == undefined) {
+            throw new Error("Balance MRLN Before is undefined");
+        }
+        expect(balanceMRLNBeforeBob.value.toString()).toBe(balanceMRLNAfterAlice.toString());
+
+        // Bob: Add Balance
+        const bobPrivateKey = PrivateKey.random();
+        const bob = bobPrivateKey.toPublicKey();
+        appChain.setSigner(bobPrivateKey);
+
+        const registerAmountBob = BigInt(messageLimitBob) * minimalDeposit.toBigInt();
+
+        const tx5 = await appChain.transaction(bob, () => {
+            balances.addBalance(tokenId, bob, UInt64.from(registerAmountBob));
+        });
+        await tx5.sign();
+        await tx5.send();
+        const block5 = await appChain.produceBlock();
+        block5?.transactions[0].status.assertEquals(true);
+
+        const keyBob = new BalancesKey({ tokenId, address: bob });
+        const balanceBobBefore = await appChain.query.runtime.Balances.balances.get(keyBob);
+        if (balanceBobBefore == undefined) {
+            throw new Error("Balance Bob Before is undefined")
+        }
+
+        // Bob: Register
+        const identityCommitmentBeforeBob = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
+        if (identityCommitmentBeforeBob == undefined) {
+            throw new Error("identityCommitmentBeforeBob is undefined");
+        }
+        const tx6 = await appChain.transaction(bob, () => {
+            mrln.register(UInt64.from(identityCommitmentBob), UInt64.from(registerAmountBob));
+        });
+        await tx6.sign();
+        await tx6.send();
+        const block6 = await appChain.produceBlock();
+        block6?.transactions[0].status.assertEquals(true);
+
+        const balanceMRLNAfterBob = await appChain.query.runtime.Balances.balances.get(keyMRLN)
+        if (balanceMRLNAfterBob == undefined) {
+            throw new Error("Balance MRLN After Bob is undefined");
+        }
+        const tokenMRLNDiffBob = balanceMRLNAfterBob.value.sub(balanceMRLNBeforeBob.value);
+        expect(tokenMRLNDiffBob.toString()).toBe(registerAmountBob.toString());
+
+        const identityCommitmentAfterBob = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
+        identityCommitmentAfterBob?.assertEquals((identityCommitmentBeforeBob.add(new Field(1))));
+
+        const balanceBobAfter = await appChain.query.runtime.Balances.balances.get(keyBob);
+        if (balanceBobAfter == undefined) {
+            throw new Error("Balance Bob After is undefined")
+        }
+        const tokenBobDiff = balanceBobBefore.value.sub(balanceBobAfter.value);
+        expect(tokenBobDiff.toString()).toBe(registerAmountBob.toString());
+
+        const memberBob = await appChain.query.runtime.MRLNContract.members.get(UInt64.from(identityCommitmentBob));
+        expect(memberBob?.address.toJSON()).toBe(bob.toJSON());
+        memberBob?.index.value.assertEquals(identityCommitmentBeforeBob);
+        expect(memberBob?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitBob));
 
 
-        //TODO VARIABLE NAMES AND REGISTER AS A FUNC
-    })
+
+
+
+
+
+    })//,
+        // it("tests", async () => {
+
+        // })
 });
 
