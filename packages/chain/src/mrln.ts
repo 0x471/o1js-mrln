@@ -125,6 +125,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
         this.FREEZE_PERIOD.set(freezePeriod);
+        this.identityCommitmentIndex.set(new Field(0));
     }
 
 
@@ -147,7 +148,6 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         this.balances.addBalance(TokenId.from(0), addressMRLN, UInt64.from(amount.value));
         this.balances.removeBalance(TokenId.from(0), tx_sender, UInt64.from(amount.value));
-
         const member = new User({ address: tx_sender, messageLimit: messageLimit, index: index });
         this.members.set(identityCommitment, member);
         this.identityCommitmentIndex.set(this.identityCommitmentIndex.get().value.add(1));
