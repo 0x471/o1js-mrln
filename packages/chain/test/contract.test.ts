@@ -153,6 +153,7 @@ describe("mrln contract", () => {
         const block2 = await appChain.produceBlock();
         block2?.transactions[0].status.assertEquals(true);
 
+        // Alice: Add Balance 
         const keyMRLN = new BalancesKey({ tokenId, address: mrlnAddrState });
         const balanceMRLNBeforeAlice = await appChain.query.runtime.Balances.balances.get(keyMRLN);
         if (balanceMRLNBeforeAlice == undefined) {
@@ -160,7 +161,6 @@ describe("mrln contract", () => {
         }
         expect(balanceMRLNBeforeAlice.value.toString()).toBe(mrlnInitialTokenBalance.toString());
 
-        // Alice: Add Balance 
         const registerAmountAlice = BigInt(messageLimitAlice) * minimalDeposit.toBigInt();
 
         const tx3 = await appChain.transaction(alice, () => {
@@ -212,13 +212,13 @@ describe("mrln contract", () => {
         memberAlice?.index.value.assertEquals(identityCommitmentBeforeAlice);
         expect(memberAlice?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitAlice));
 
+        // Bob: Add Balance
         const balanceMRLNBeforeBob = await appChain.query.runtime.Balances.balances.get(keyMRLN);
         if (balanceMRLNBeforeBob == undefined) {
             throw new Error("Balance MRLN Before is undefined");
         }
         expect(balanceMRLNBeforeBob.value.toString()).toBe(balanceMRLNAfterAlice.toString());
 
-        // Bob: Add Balance
         const bobPrivateKey = PrivateKey.random();
         const bob = bobPrivateKey.toPublicKey();
         appChain.setSigner(bobPrivateKey);
