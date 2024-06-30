@@ -782,27 +782,5 @@ describe("mrln contract", () => {
             const block6 = await appChain.produceBlock();
             expect(block6?.transactions[0].statusMessage).toBe('MRLN: idCommitment already registered');
             block6?.transactions[0].status.assertEquals(false);
-
-            // const balanceMRLNAfterBob = await appChain.query.runtime.Balances.balances.get(keyMRLN)
-            // if (balanceMRLNAfterBob == undefined) {
-            //     throw new Error("Balance MRLN After Bob is undefined");
-            // }
-            // const tokenMRLNDiffBob = balanceMRLNAfterBob.value.sub(balanceMRLNBeforeBob.value);
-            // expect(tokenMRLNDiffBob.toString()).toBe(registerAmountBob.toString());
-
-            // const identityCommitmentAfterBob = await appChain.query.runtime.MRLNContract.identityCommitmentIndex.get();
-            // identityCommitmentAfterBob?.assertEquals((identityCommitmentBeforeBob.add(new Field(1))));
-
-            // const balanceBobAfter = await appChain.query.runtime.Balances.balances.get(keyBob);
-            // if (balanceBobAfter == undefined) {
-            //     throw new Error("Balance Bob After is undefined")
-            // }
-            // const tokenBobDiff = balanceBobBefore.value.sub(balanceBobAfter.value);
-            // expect(tokenBobDiff.toString()).toBe(registerAmountBob.toString());
-
-            // const memberBob = await appChain.query.runtime.MRLNContract.members.get(UInt64.from(identityCommitmentBob));
-            // expect(memberBob?.address.toJSON()).toBe(bob.toJSON());
-            // memberBob?.index.value.assertEquals(identityCommitmentBeforeBob);
-            // expect(memberBob?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitBob));
         })
 })
