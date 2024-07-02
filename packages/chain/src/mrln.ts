@@ -16,9 +16,11 @@ import {
     Struct,
     PublicKey,
     Provable,
+    Bool,
 } from "o1js";
 import { Balances } from "./balances";
-
+import { Pickles } from "o1js/dist/node/snarky";
+import { dummyBase64Proof } from "o1js/dist/node/lib/proof_system";
 
 export const TREE_HEIGHT = 20;
 export class TreeWitness extends MerkleWitness(TREE_HEIGHT) { }
@@ -72,7 +74,26 @@ export const MRLNCircuit = Experimental.ZkProgram({
     },
 });
 
-export class MRLNProof extends Experimental.ZkProgram.Proof(MRLNCircuit) { }
+// Dummy Proof
+class MRLNProof extends Experimental.ZkProgram.Proof(MRLNCircuit) {}
+const canClaim = (x: Field, externalNullifier: Field) => {
+    return {
+        y: new Field(1),
+        root: new Field(2),
+        nullifier: new Field(3)
+    }
+  };
+const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
+const publicInput = {
+    x: new Field(0),
+    externalNullifier: new Field(1)
+};
+const dummyProof = new MRLNProof({
+  proof: dummy,
+  publicOutput: canClaim(publicInput.x, publicInput.externalNullifier),
+  publicInput,
+  maxProofsVerified: 2,
+});
 
 export class User extends Struct({
     address: PublicKey,
