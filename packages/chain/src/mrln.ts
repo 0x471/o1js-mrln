@@ -177,7 +177,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @runtimeMethod()
     public withdraw(identityCommitment: UInt64, proof: MRLNProof) {
         const member = this.members.get(identityCommitment).value;
-        assert(member.address.isEmpty().equals(false), 'MRLN: ember does not exist');
+        assert(member.address.isEmpty().equals(false), 'MRLN: member does not exist');
         assert(this.withdrawals.get(identityCommitment).value.blockNumber.value.equals(UInt64.from(0).value), 'MRLN: such withdrawal exists');
         proof.verify();
 
