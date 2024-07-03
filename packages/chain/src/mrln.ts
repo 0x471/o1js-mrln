@@ -88,7 +88,7 @@ const publicInput = {
     x: new Field(0),
     externalNullifier: new Field(1)
 };
-const dummyProof = new MRLNProof({
+export const dummyProof = new MRLNProof({
   proof: dummy,
   publicOutput: canClaim(publicInput.x, publicInput.externalNullifier),
   publicInput,
