@@ -189,10 +189,9 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
     @runtimeMethod()
     public release(identityCommitment: UInt64) {
         const FREEZE_PERIOD = this.FREEZE_PERIOD.get().value;
-        const withdrawal = this.withdrawals.get(identityCommitment).value;
+        const withdrawal = this.withdrawals.get(UInt64.from(identityCommitment.value)).value;
         const blockNumber = UInt64.from(withdrawal.blockNumber);
-
-        blockNumber.value.assertNotEquals(Field.from(0), 'MRLN: no such withdrawals')
+        assert(blockNumber.value.greaterThan(new Field(0)), 'MRLN: no such withdrawals');
         assert(UInt64.from(this.network.block.height).sub(blockNumber).greaterThan(UInt64.from(FREEZE_PERIOD)));
 
         const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: PublicKey.empty() })
@@ -201,7 +200,8 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const newMemberState = new User({ address: PublicKey.empty(), messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
-        this.balances.addBalance(TokenId.from(1), withdrawal.receiver, withdrawal.amount);
+        this.balances.addBalance(TokenId.from(0), withdrawal.receiver, withdrawal.amount);
+        this.balances.removeBalance(TokenId.from(0), this.MRLN_ADDRESS.get().value, withdrawal.amount);
     }
 
     @runtimeMethod()
@@ -226,8 +226,8 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const withdrawAmount = UInt64.from(member.messageLimit).mul(UInt64.from(MINIMAL_DEPOSIT.value));
         const feeAmount = UInt64.from(FEE_PERCENTAGE.value).mul(withdrawAmount).div(100);
 
-        this.balances.removeBalance(TokenId.from(1), member.address, feeAmount);
-        this.balances.addBalance(TokenId.from(1), FEE_RECEIVER, feeAmount);
+        this.balances.removeBalance(TokenId.from(0), member.address, feeAmount);
+        this.balances.addBalance(TokenId.from(0), FEE_RECEIVER, feeAmount);
 
     }
 
