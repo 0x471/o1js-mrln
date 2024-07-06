@@ -75,24 +75,24 @@ export const MRLNCircuit = Experimental.ZkProgram({
 });
 
 // Dummy Proof
-class MRLNProof extends Experimental.ZkProgram.Proof(MRLNCircuit) {}
+class MRLNProof extends Experimental.ZkProgram.Proof(MRLNCircuit) { }
 const canClaim = (x: Field, externalNullifier: Field) => {
     return {
         y: new Field(1),
         root: new Field(2),
         nullifier: new Field(3)
     }
-  };
+};
 const [, dummy] = Pickles.proofOfBase64(await dummyBase64Proof(), 2);
 const publicInput = {
     x: new Field(0),
     externalNullifier: new Field(1)
 };
 export const dummyProof = new MRLNProof({
-  proof: dummy,
-  publicOutput: canClaim(publicInput.x, publicInput.externalNullifier),
-  publicInput,
-  maxProofsVerified: 2,
+    proof: dummy,
+    publicOutput: canClaim(publicInput.x, publicInput.externalNullifier),
+    publicInput,
+    maxProofsVerified: 2,
 });
 
 export class User extends Struct({
@@ -221,13 +221,14 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.members.set(identityCommitment, newMemberState);
 
         const FEE_RECEIVER = this.FEE_RECEIVER.get().value;
-        const MINIMAL_DEPOSIT = UInt64.from(this.FREEZE_PERIOD.get().value);
-        const FEE_PERCENTAGE = UInt64.from(this.FEE_PERCENTAGE.get().value);
-        const withdrawAmount = UInt64.from(member.messageLimit).mul(UInt64.from(MINIMAL_DEPOSIT.value));
-        const feeAmount = UInt64.from(FEE_PERCENTAGE.value).mul(withdrawAmount).div(100);
+        const FEE_PERCENTAGE = this.FEE_PERCENTAGE.get().value;
 
-        this.balances.removeBalance(TokenId.from(0), member.address, feeAmount);
+        const withdrawAmount = UInt64.from(member.messageLimit.value).mul(UInt64.from(this.MINIMAL_DEPOSIT.get().value));
+        const feeAmount = (UInt64.from(FEE_PERCENTAGE).mul(withdrawAmount)).div(100);
+
+        this.balances.addBalance(TokenId.from(0), receiver, withdrawAmount.sub(feeAmount));
         this.balances.addBalance(TokenId.from(0), FEE_RECEIVER, feeAmount);
+        this.balances.removeBalance(TokenId.from(0), this.MRLN_ADDRESS.get().value, UInt64.from(withdrawAmount));
 
     }
 
