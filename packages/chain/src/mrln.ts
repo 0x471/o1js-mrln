@@ -206,11 +206,11 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
     @runtimeMethod()
     public slash(identityCommitment: UInt64, receiver: PublicKey, proof: MRLNProof) {
-        assert(receiver.isEmpty().equals(false));
+        assert(receiver.isEmpty().equals(false), 'MRLN: empty receiver address');
 
         const member = this.members.get(identityCommitment).value;
-        assert(member.address.isEmpty().equals(false));
-        assert((member.address.equals(receiver)).equals(false));
+        assert(member.address.isEmpty().equals(false), 'MRLN: member does not exist');
+        assert((member.address.equals(receiver)).equals(false), 'MRLN: self-slashing is prohibited');
 
         proof.verify();
 
