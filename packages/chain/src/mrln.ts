@@ -192,7 +192,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         const withdrawal = this.withdrawals.get(UInt64.from(identityCommitment.value)).value;
         const blockNumber = UInt64.from(withdrawal.blockNumber);
         assert(blockNumber.value.greaterThan(new Field(0)), 'MRLN: no such withdrawals');
-        assert(UInt64.from(this.network.block.height).sub(blockNumber).greaterThan(UInt64.from(FREEZE_PERIOD)));
+        assert(UInt64.from(this.network.block.height).sub(blockNumber).greaterThan(UInt64.from(FREEZE_PERIOD)), 'MRLN: cannot release yet');
 
         const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: PublicKey.empty() })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
