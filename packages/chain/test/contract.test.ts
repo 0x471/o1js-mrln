@@ -2077,15 +2077,16 @@ describe("mrln contract", () => {
             memberAlice?.index.value.assertEquals(identityCommitmentBeforeAlice);
             expect(memberAlice?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitAlice));
 
-            // // Alice: Slash (receiver is zero)
-            // const tx5 = await appChain.transaction(alice, () => {
-            //     mrln.slash(UInt64.from(identityCommitmentAlice), PublicKey.empty().toJSON(), dummyProof);
-            // });
-            // await tx5.sign();
-            // await tx5.send();
-            // const block5 = await appChain.produceBlock();
-            // expect(block5?.transactions[0].statusMessage).toBe('MRLN: empty receiver address');
-            // block5?.transactions[0].status.assertEquals(false);
+            // Alice: Slash (receiver is zero)
+            const emptypubkey = PublicKey.empty()
+            const tx5 = await appChain.transaction(alice, () => {
+                mrln.slash(UInt64.from(identityCommitmentAlice), emptypubkey, dummyProof);
+            });
+            await tx5.sign();
+            await tx5.send();
+            const block5 = await appChain.produceBlock();
+            expect(block5?.transactions[0].statusMessage).toBe('MRLN: empty receiver address');
+            block5?.transactions[0].status.assertEquals(false);
 
         }),
         it("test slash fails when not registered", async () => {
