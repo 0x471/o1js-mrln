@@ -64,6 +64,31 @@ export function RLN(
     });
 }
 
+export class WithdrawCircuitPublicOutput extends Struct({
+    address: PublicKey,
+    identityCommitment: Field
+}) { }
+
+export class WithdrawCircuitPublicInput extends Struct({
+    address: PublicKey
+}) { }
+
+export function Withdraw(
+    publicInput: WithdrawCircuitPublicInput,
+    identitySecret: Field,
+): WithdrawCircuitPublicOutput {
+
+    const identityCommitment = Poseidon.hash([identitySecret]);
+
+    return new WithdrawCircuitPublicOutput({
+        address: publicInput.address,
+        identityCommitment: identityCommitment
+
+    });
+}
+
+
+
 export const MRLNCircuit = Experimental.ZkProgram({
     publicOutput: MRLNCircuitPublicOutput,
     publicInput: MRLNCircuitPublicInput,
@@ -74,6 +99,18 @@ export const MRLNCircuit = Experimental.ZkProgram({
         },
     },
 });
+
+export const WithdrawCircuit = Experimental.ZkProgram({
+    publicOutput: WithdrawCircuitPublicOutput,
+    publicInput: WithdrawCircuitPublicInput,
+    methods: {
+        canWithdraw: {
+            privateInputs: [Field],
+            method: Withdraw,
+        },
+    },
+});
+
 
 // Dummy Proof
 class MRLNProof extends Experimental.ZkProgram.Proof(MRLNCircuit) { }
