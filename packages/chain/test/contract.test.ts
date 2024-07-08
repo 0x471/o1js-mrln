@@ -3,7 +3,7 @@ import { Bool, Field, Poseidon, PublicKey } from "o1js";
 import { PrivateKey } from "o1js";
 import { Balances } from "../src/balances";
 import { MRLNContract, dummyProof } from "../src/mrln";
-import { log } from "@proto-kit/common";
+import { log, EMPTY_PUBLICKEY } from "@proto-kit/common";
 import { BalancesKey, TokenId, UInt64 } from "@proto-kit/library";
 
 
@@ -1406,7 +1406,7 @@ describe("mrln contract", () => {
             if (aliceStateAfterRelease == undefined) {
                 throw new Error("Alice state after release is undefined")
             }
-            expect(aliceStateAfterRelease.address.toJSON()).toBe(PublicKey.empty().toJSON());
+            expect(aliceStateAfterRelease.address.toJSON()).toBe(EMPTY_PUBLICKEY.toJSON());
             expect(aliceStateAfterRelease.messageLimit.value.toString()).toBe(new Field(0).toString());
             expect(aliceStateAfterRelease.index.value.toString()).toBe(new Field(0).toString());
 
@@ -1417,7 +1417,7 @@ describe("mrln contract", () => {
             }
             expect(aliceWithdrawalAfterRelease.amount.value.toString()).toBe(new Field(0).toString())
             expect(aliceWithdrawalAfterRelease.blockNumber.value.toString()).toBe(new Field(0).toString());
-            expect(aliceWithdrawalAfterRelease.receiver.toJSON()).toBe(PublicKey.empty().toJSON());
+            expect(aliceWithdrawalAfterRelease.receiver.toJSON()).toBe(EMPTY_PUBLICKEY.toJSON());
 
         }),
         it("test release fails when no withdrawal", async () => {
@@ -1875,7 +1875,7 @@ describe("mrln contract", () => {
             if (aliceStateAfterRelease == undefined) {
                 throw new Error("Alice state after release is undefined")
             }
-            expect(aliceStateAfterRelease.address.toJSON()).toBe(PublicKey.empty().toJSON());
+            expect(aliceStateAfterRelease.address.toJSON()).toBe(EMPTY_PUBLICKEY.toJSON());
             expect(aliceStateAfterRelease.messageLimit.value.toString()).toBe(new Field(0).toString());
             expect(aliceStateAfterRelease.index.value.toString()).toBe(new Field(0).toString());
 
@@ -1886,7 +1886,7 @@ describe("mrln contract", () => {
             }
             expect(aliceWithdrawalAfterRelease.amount.value.toString()).toBe(new Field(0).toString())
             expect(aliceWithdrawalAfterRelease.blockNumber.value.toString()).toBe(new Field(0).toString());
-            expect(aliceWithdrawalAfterRelease.receiver.toJSON()).toBe(PublicKey.empty().toJSON());
+            expect(aliceWithdrawalAfterRelease.receiver.toJSON()).toBe(EMPTY_PUBLICKEY.toJSON());
 
 
             // Test: register, withdraw, ang get slashed before release
@@ -1935,7 +1935,7 @@ describe("mrln contract", () => {
             if (carolStateAfterRelease == undefined) {
                 throw new Error("Carol state after slash is undefined")
             }
-            expect(carolStateAfterRelease.address.toJSON()).toBe(PublicKey.empty().toJSON());
+            expect(carolStateAfterRelease.address.toJSON()).toBe(EMPTY_PUBLICKEY.toJSON());
             expect(carolStateAfterRelease.messageLimit.value.toString()).toBe(new Field(0).toString());
             expect(carolStateAfterRelease.index.value.toString()).toBe(new Field(0).toString());
 
@@ -1946,7 +1946,7 @@ describe("mrln contract", () => {
             }
             expect(carolWithdrawalAfterRelease.amount.value.toString()).toBe(new Field(0).toString())
             expect(carolWithdrawalAfterRelease.blockNumber.value.toString()).toBe(new Field(0).toString());
-            expect(carolWithdrawalAfterRelease.receiver.toJSON()).toBe(PublicKey.empty().toJSON());
+            expect(carolWithdrawalAfterRelease.receiver.toJSON()).toBe(EMPTY_PUBLICKEY.toJSON());
         }), 
         it("test slash fails when receiver is zero", async () => {
             const appChain = TestingAppChain.fromRuntime({
@@ -2078,9 +2078,8 @@ describe("mrln contract", () => {
             expect(memberAlice?.messageLimit.value.toBigInt()).toBe(BigInt(messageLimitAlice));
 
             // Alice: Slash (receiver is zero)
-            const emptypubkey = PublicKey.empty()
             const tx5 = await appChain.transaction(alice, () => {
-                mrln.slash(UInt64.from(identityCommitmentAlice), emptypubkey, dummyProof);
+                mrln.slash(UInt64.from(identityCommitmentAlice), EMPTY_PUBLICKEY, dummyProof);
             });
             await tx5.sign();
             await tx5.send();

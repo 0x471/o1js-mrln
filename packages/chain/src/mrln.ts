@@ -21,6 +21,7 @@ import {
 import { Balances } from "./balances";
 import { Pickles } from "o1js/dist/node/snarky";
 import { dummyBase64Proof } from "o1js/dist/node/lib/proof_system";
+import { EMPTY_PUBLICKEY } from "@proto-kit/common";
 
 export const TREE_HEIGHT = 20;
 export class TreeWitness extends MerkleWitness(TREE_HEIGHT) { }
@@ -141,7 +142,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         this.MRLN_ADDRESS.set(addr);
         this.MINIMAL_DEPOSIT.set(minimalDeposit);
         this.MAXIMAL_RATE.set(maximalRate);
-        assert(feeReceiver.isEmpty().equals(false));
+        assert(feeReceiver.equals(EMPTY_PUBLICKEY).equals(false));
         this.SET_SIZE.set(setSize); // 1 << depth
         this.FEE_RECEIVER.set(feeReceiver);
         this.FEE_PERCENTAGE.set(feePercentage);
@@ -194,10 +195,10 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
         assert(blockNumber.value.greaterThan(new Field(0)), 'MRLN: no such withdrawals');
         assert(UInt64.from(this.network.block.height).sub(blockNumber).greaterThan(UInt64.from(FREEZE_PERIOD)), 'MRLN: cannot release yet');
 
-        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: PublicKey.empty() })
+        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: EMPTY_PUBLICKEY })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
 
-        const newMemberState = new User({ address: PublicKey.empty(), messageLimit: UInt64.from(0), index: UInt64.from(0) })
+        const newMemberState = new User({ address: EMPTY_PUBLICKEY, messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
         this.balances.addBalance(TokenId.from(0), withdrawal.receiver, withdrawal.amount);
@@ -206,7 +207,7 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
     @runtimeMethod()
     public slash(identityCommitment: UInt64, receiver: PublicKey, proof: MRLNProof) {
-        assert(receiver.isEmpty().equals(false), 'MRLN: empty receiver address');
+        assert(receiver.equals(EMPTY_PUBLICKEY).equals(false), 'MRLN: empty receiver address');
 
         const member = this.members.get(identityCommitment).value;
         assert(member.address.isEmpty().equals(false), 'MRLN: member does not exist');
@@ -214,10 +215,10 @@ export class MRLNContract extends RuntimeModule<MRLNContractConfig> {
 
         proof.verify();
 
-        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: PublicKey.empty() })
+        const newWithdrawalState = new Withdrawal({ blockNumber: UInt64.from(0), amount: UInt64.from(0), receiver: EMPTY_PUBLICKEY })
         this.withdrawals.set(identityCommitment, newWithdrawalState);
 
-        const newMemberState = new User({ address: PublicKey.empty(), messageLimit: UInt64.from(0), index: UInt64.from(0) })
+        const newMemberState = new User({ address: EMPTY_PUBLICKEY, messageLimit: UInt64.from(0), index: UInt64.from(0) })
         this.members.set(identityCommitment, newMemberState);
 
         const FEE_RECEIVER = this.FEE_RECEIVER.get().value;
